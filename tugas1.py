@@ -7,7 +7,7 @@ st.set_page_config(page_title="Tugas ITE", layout="wide")
 FILE_DATA = "data_tugas.csv"
 
 # ========================
-# Fungsi Simpan Data
+# Fungsi Simpan & Load
 # ========================
 def simpan_data(data):
     df = pd.DataFrame([data])
@@ -16,9 +16,6 @@ def simpan_data(data):
     else:
         df.to_csv(FILE_DATA, index=False)
 
-# ========================
-# Load Data
-# ========================
 def load_data():
     if os.path.exists(FILE_DATA):
         return pd.read_csv(FILE_DATA)
@@ -26,107 +23,94 @@ def load_data():
         return pd.DataFrame()
 
 # ========================
-# Login Sederhana
+# Sidebar Login Dosen
 # ========================
-st.sidebar.title("🔐 Login")
-
-role = st.sidebar.selectbox("Login sebagai:", ["Mahasiswa", "Dosen"])
+st.sidebar.title("🔐 Login Dosen")
 
 username = st.sidebar.text_input("Username")
 password = st.sidebar.text_input("Password", type="password")
 
-login = st.sidebar.button("Login")
-
-# Dummy akun
-akun_dosen = {"dosen": "123"}
-akun_mahasiswa = {"mhs1": "123", "mhs2": "123"}
-
-if login:
-    if role == "Dosen" and akun_dosen.get(username) == password:
-        st.session_state["login"] = True
-        st.session_state["role"] = "dosen"
-        st.session_state["user"] = username
-    elif role == "Mahasiswa" and akun_mahasiswa.get(username) == password:
-        st.session_state["login"] = True
-        st.session_state["role"] = "mahasiswa"
-        st.session_state["user"] = username
+if st.sidebar.button("Login"):
+    if username == "indrawan" and password == "161023":
+        st.session_state["dosen_login"] = True
     else:
         st.error("Login gagal")
 
 # ========================
-# Jika sudah login
+# HALAMAN UTAMA
 # ========================
-if "login" in st.session_state:
+st.title("📘 Form Tugas Analisis Kasus ITE")
 
-    # ========================
-    # MAHASISWA
-    # ========================
-    if st.session_state["role"] == "mahasiswa":
-        st.title("📘 Form Tugas Mahasiswa")
+# ========================
+# FORM MAHASISWA (TANPA LOGIN)
+# ========================
+st.subheader("🧑‍🎓 Input Tugas Mahasiswa")
 
-        nama = st.text_input("Nama")
-        nim = st.text_input("NIM")
-        kelas = st.text_input("Kelas")
+nama = st.text_input("Nama")
+nim = st.text_input("NIM")
+kelas = st.text_input("Kelas")
 
-        etika = st.text_area("Analisis Etika")
-        hukum = st.text_area("Analisis Hukum")
-        dampak = st.text_area("Dampak")
-        solusi = st.text_area("Solusi")
-        refleksi = st.text_area("Refleksi")
+etika = st.text_area("Analisis Etika")
+hukum = st.text_area("Analisis Hukum")
+dampak = st.text_area("Dampak")
+solusi = st.text_area("Solusi")
+refleksi = st.text_area("Refleksi")
 
-        if st.button("Submit"):
-            data = {
-                "user": st.session_state["user"],
-                "nama": nama,
-                "nim": nim,
-                "kelas": kelas,
-                "etika": etika,
-                "hukum": hukum,
-                "dampak": dampak,
-                "solusi": solusi,
-                "refleksi": refleksi
-            }
-            simpan_data(data)
-            st.success("Tugas tersimpan!")
+if st.button("📩 Submit Tugas"):
+    if nama and nim:
+        data = {
+            "nama": nama,
+            "nim": nim,
+            "kelas": kelas,
+            "etika": etika,
+            "hukum": hukum,
+            "dampak": dampak,
+            "solusi": solusi,
+            "refleksi": refleksi
+        }
+        simpan_data(data)
+        st.success("Tugas berhasil disimpan!")
+    else:
+        st.warning("Nama dan NIM wajib diisi!")
 
-        # Tampilkan data miliknya
-        st.subheader("📄 Jawaban Anda")
-        df = load_data()
-        if not df.empty:
-            df_user = df[df["user"] == st.session_state["user"]]
-            st.dataframe(df_user)
+st.divider()
 
-    # ========================
-    # DOSEN
-    # ========================
-    elif st.session_state["role"] == "dosen":
-        st.title("📊 Dashboard Dosen")
+# ========================
+# TAMPILKAN DATA (READ ONLY)
+# ========================
+st.subheader("📄 Data Jawaban Mahasiswa")
 
-        df = load_data()
+df = load_data()
 
-        if df.empty:
-            st.warning("Belum ada data")
-        else:
-            st.subheader("Semua Jawaban Mahasiswa")
-            st.dataframe(df)
-
-            # Filter per mahasiswa
-            st.subheader("🔍 Filter Mahasiswa")
-            pilih_user = st.selectbox("Pilih Mahasiswa", df["user"].unique())
-
-            data_mhs = df[df["user"] == pilih_user]
-
-            st.write("### Detail Jawaban")
-            st.write(data_mhs)
-
-            # View detail satu per satu
-            for i, row in data_mhs.iterrows():
-                with st.expander(f"{row['nama']} - {row['nim']}"):
-                    st.write("**Etika:**", row["etika"])
-                    st.write("**Hukum:**", row["hukum"])
-                    st.write("**Dampak:**", row["dampak"])
-                    st.write("**Solusi:**", row["solusi"])
-                    st.write("**Refleksi:**", row["refleksi"])
-
+if not df.empty:
+    st.dataframe(df)
 else:
-    st.title("🔐 Silakan Login Terlebih Dahulu")
+    st.info("Belum ada data")
+
+# ========================
+# DASHBOARD DOSEN
+# ========================
+if "dosen_login" in st.session_state:
+
+    st.divider()
+    st.title("📊 Dashboard Dosen")
+
+    if df.empty:
+        st.warning("Belum ada data")
+    else:
+        # Filter mahasiswa
+        st.subheader("🔍 Filter Mahasiswa")
+        pilih_nim = st.selectbox("Pilih NIM", df["nim"].unique())
+
+        data_mhs = df[df["nim"] == pilih_nim]
+
+        st.write("### Detail Jawaban")
+
+        for i, row in data_mhs.iterrows():
+            with st.expander(f"{row['nama']} ({row['nim']})"):
+                st.write("**Kelas:**", row["kelas"])
+                st.write("**Etika:**", row["etika"])
+                st.write("**Hukum:**", row["hukum"])
+                st.write("**Dampak:**", row["dampak"])
+                st.write("**Solusi:**", row["solusi"])
+                st.write("**Refleksi:**", row["refleksi"])
