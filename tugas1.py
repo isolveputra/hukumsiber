@@ -92,7 +92,7 @@ else:
 # SUBMIT
 # ========================
 if st.button("📩 Submit Tugas"):
-    if nama and nim:
+    if nama and kelompok:
         if valid_kata:
             data = {
                 "nama": nama,
