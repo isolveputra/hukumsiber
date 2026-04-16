@@ -66,7 +66,7 @@ st.divider()
 st.subheader("🧑‍🎓 Input Data Mahasiswa")
 
 nama = st.text_input("Nama")
-nim = st.text_input("NIM")
+kelompok = st.text_input("Kelompok")
 kelas = st.text_input("Kelas")
 
 st.subheader("✍️ Jawaban Analisis")
@@ -96,7 +96,7 @@ if st.button("📩 Submit Tugas"):
         if valid_kata:
             data = {
                 "nama": nama,
-                "nim": nim,
+                "kelompok": kelompok,
                 "kelas": kelas,
                 "jawaban": jawaban,
                 "jumlah_kata": jumlah_kata
@@ -106,7 +106,7 @@ if st.button("📩 Submit Tugas"):
         else:
             st.error("Jumlah kata harus antara 500–800!")
     else:
-        st.warning("Nama dan NIM wajib diisi!")
+        st.warning("Nama dan Kelompok wajib diisi!")
 
 st.divider()
 
@@ -140,7 +140,7 @@ if "dosen_login" in st.session_state:
         st.subheader("✏️ Edit Data")
 
         nama_edit = st.text_input("Nama", value=data["nama"], key="edit_nama")
-        nim_edit = st.text_input("NIM", value=data["nim"], key="edit_nim")
+        kelompok_edit = st.text_input("Kelompok", value=data["kelompok"], key="edit_kelompok")
         kelas_edit = st.text_input("Kelas", value=data["kelas"], key="edit_kelas")
         jawaban_edit = st.text_area("Jawaban", value=data["jawaban"], height=300, key="edit_jawaban")
 
@@ -153,7 +153,7 @@ if "dosen_login" in st.session_state:
         with col1:
             if st.button("💾 Update"):
                 df.loc[idx] = [
-                    nama_edit, nim_edit, kelas_edit,
+                    nama_edit, kelompok_edit, kelas_edit,
                     jawaban_edit, jumlah_kata_edit
                 ]
                 save_data(df)
