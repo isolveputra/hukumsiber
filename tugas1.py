@@ -13,7 +13,7 @@ def load_data():
     if os.path.exists(FILE_DATA):
         return pd.read_csv(FILE_DATA)
     else:
-        return pd.DataFrame(columns=["nama","nim","kelas","jawaban","jumlah_kata"])
+        return pd.DataFrame(columns=["nama","kelompok","kelas","jawaban","jumlah_kata"])
 
 def save_data(df):
     df.to_csv(FILE_DATA, index=False)
