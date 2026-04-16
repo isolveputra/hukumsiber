@@ -55,7 +55,7 @@ st.markdown("""
   - Etika
   - Hukum (UU ITE)
 - Jawaban ditulis secara individu / kelompok
-- Panjang jawaban: **500 – 800 kata**
+- Panjang jawaban: **300 – 800 kata**
 """)
 
 st.divider()
@@ -80,8 +80,8 @@ st.write(f"📊 Jumlah kata: **{jumlah_kata} kata**")
 # Validasi kata
 valid_kata = False
 
-if jumlah_kata < 500:
-    st.warning("Minimal 500 kata ❌")
+if jumlah_kata < 300:
+    st.warning("Minimal 300 kata ❌")
 elif jumlah_kata > 800:
     st.error("Maksimal 800 kata ❌")
 else:
